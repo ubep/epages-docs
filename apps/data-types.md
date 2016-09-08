@@ -215,7 +215,7 @@ This object is used for the attributes of shippingAddress and billingAddress.
 | lineItemsSubTotal | object of [price](page:apps-data-types#price) | The sum of the line item price of all line items. |
 | productLineItems | array of [productLineItem](page:apps-data-types#productlineitem) | A list of line items. |
 | shippingPrice | object of [price](page:apps-data-types#price) | The shipping price of the line item. |
-| couponLineItem | array of [couponLineItem](page:apps-data-types#couponlineitem) | Contains the line items of a coupon. |
+| couponLineItem | object of [couponLineItem](page:apps-data-types#couponlineitem) | The line item of a coupon. |
 
 ## link
 
