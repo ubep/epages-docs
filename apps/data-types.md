@@ -289,7 +289,6 @@ This object is used for the attributes of shippingAddress and billingAddress.
 | shippingData | object of [shippingData](page:apps-data-types#shippingdata) | The shipping data of  a cart or an order, i.e. short info on shipping method and price.|
 | paymentData | object of [paymentData](page:apps-data-types#paymentdata) | The payment data of  a cart or an order, i.e. short info on payment method and price.|
 | lineItemContainer | [lineItemContainer](page:apps-data-types#lineitemcontainer) | Contains the line items of an order. Only included in [`GET`/orders/{orderId}](page:apps-api-get-shops-shopid-orders-orderid-information). |
-| productLineItems | array of [productLineItem](page:apps-data-types#productlineitem) | A list of line items. Only included in [`GET`/orders/{orderId}](page:apps-api-get-shops-shopid-orders-orderid-information). |
 | shippingPrice | object of [price](page:apps-data-types#price) | The shipping price for the order.  |
 | links | array of [link](page:apps-data-types#link) | The links to the products of the order. |
 
