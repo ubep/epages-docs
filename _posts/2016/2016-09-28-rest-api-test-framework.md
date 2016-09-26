@@ -8,15 +8,15 @@ authors: ["Ulf B."]
 ---
 
 A few years ago, at the time when the development of the ePages REST API started,
-ePages 6 was just a huge monolith written in Perl and already hard to handle.
+ePages 6 was a huge monolith written in Perl and already hard to handle.
 Since the monolith should not be inflated even more and in order to be able to use state-of-the-art frameworks,
 the REST API was started as a separate service implemented in Java.
 
-This service communicates with the monolith via REST and SOAP in order to operate on the data we won't to expose to the public.
-All the API related business logic like right management and rate limits are implemented in Java such that the API's we had to implement in Perl could
-become quiete simple.
+This service communicates with the monolith via REST and SOAP in order to operate on the data we did not want to to expose to the public.
+All the API related business logic - like rights management and rate limiting - are implemented in Java so that the API's we had to implement in Perl could
+become quite simple.
 
-Of course all the resource and services classes are coverey by unit test on both sides, Perl and Java,
+Of course all the resource and service classes are covered by unit test on both sides, Perl and Java,
 but since the functionality of the API is based on two different projects that live in two different repositories
 which have two different teams responsible for the releases,
 we wanted to have a simple way to check with one click if everything - from end to end - is working as expected.
@@ -25,20 +25,20 @@ This was the starting point of RAT - our Rest API Test framework.
 
 ## RAT
 
-The idea of RAT was to create a framework that allows us to easily verify the state of the REST API on an abritrary ePages installation.
+The idea of RAT was to create a framework that allows us to easily verify the state of the REST API on an arbitrary ePages installation.
 
 In order to do so, RAT sends requests to the API and validates the response.
-To be able to compare the response with an expected one, we let the test run on shop of the DemoShopType
+To be able to compare a response with an expectation, we let the test run on shops of the DemoShopType
 (The developer installation of ePages includes a DemoShopType which allows to create a demo shop with certain products of different types and a few orders).
 We wanted the test cases to be able to run in a arbitrary order. The problem is that some of the API calls change a shop (DELETE product),
 which lead to different results in the following calls. The solution is to create new shops for testing those calls.
-The ePages6 REST API does not offer an endpoint to create new shops so far, so we used the ePages SOAP API to do that.
+The ePages6 REST API does not yet offer an endpoint to create new shops, so we used the ePages SOAP API to do that.
 
 RAT is based on [REST-assured](http://rest-assured.io/) and [Serenity BDD](http://www.thucydides.info), two tools that take over a lot of work on the way to produce nice test results. In the next paragraphs I will introduce these tools briefly and show how we use them.
 
 ### REST-assured
 
-The certain test cases are implemented using REST-assured. It is a framework that is specially designed for testing REST APIs and allows easily to send different kind of requests and validation of their responses.
+The test cases are implemented using REST-assured. It is a framework that is specially designed for testing REST APIs and easily allows to send different kinds of requests and validate their responses.
 
 A simple check if the product resource of our REST API is returning 22 products could look like that:
 
@@ -61,7 +61,7 @@ So REST-assured allows us to do request and validation in one step (*assertThat(
 In RAT we usually store the result for later use (e.g. extracting the links and follow them with further requests)
 and do the validation in a separate step.
 
-Since baseUri and request headers are for every request more or less the same, we put the request specification in a separate class:
+Since baseUri and request headers are more or less the same for every request, we put the request specification in a separate class:
 
 {% highlight java %}
 JsonPath products = requestSpecification
@@ -78,7 +78,7 @@ JsonPath products = requestSpecification
 
 #### JSONPath ####
 
-REST-assured comes already with a library for JSONPath (which is basically [XPath](https://en.wikipedia.org/wiki/XPath) for JSON) namely [com.jayway.restassured:json-path](https://mvnrepository.com/artifact/com.jayway.restassured/json-path),
+REST-assured already includes a library for JSONPath (which is basically [XPath](https://en.wikipedia.org/wiki/XPath) for JSON) namely [com.jayway.restassured:json-path](https://mvnrepository.com/artifact/com.jayway.restassured/json-path),
 that can be used to validate a JSON response and verify certain attributes.
 
 Unfortunately this library does not implement all the JSONPath expressions from [Stefan Gössner's JSONPath specification](http://goessner.net/articles/JsonPath/) - that's why we use [com.jayway.jsonpath:json-path](https://mvnrepository.com/artifact/com.jayway.jsonpath/json-path) instead.
@@ -110,9 +110,9 @@ List<String> productNames = products.read("items[*].name");
 ### Serenity BDD
 
 Similar to [Cucumber](https://cucumber.io/) in the Ruby world,
-Serentiy allows you to describe and structure the test cases in way that acts like a complete specification that describes each use case step by step.
+Serenity allows you to describe and structure the test cases in way that acts like a complete specification that describes each use case step by step.
 
-The following snippet shows a test case we use to check if an uploaded image was added to the slideshow of a a product:
+The following snippet shows a test case we use to check if an uploaded image gets added to the slideshow of a product:
 
 {% highlight java %}
 @RunWith(SerenityRunner.class)
@@ -146,7 +146,7 @@ public class WhenUploadingProductImage {
 }
 {% endhighlight %}
 
-The certain test steps are in a separate classes. We have a class *ShopSteps* which contains tests that are shop-specific and needed in all tests. Then we have e.g. *ProductSteps* inherting from ShopSteps for steps that are used in product-related tests.
+Certain test steps are contained in a separate classes to better facilitate re-use. We have a class *ShopSteps* which contains tests that are shop-specific and needed in all tests. Then we have e.g. *ProductSteps* inheriting from ShopSteps for steps that are used in product-related tests.
 
 This example shows the *ProductImageSteps* (which for their part inherit from *ProductSteps*) which only contains those steps that are relevant for product image-related tests:
 
@@ -180,12 +180,12 @@ You can click on a feature to see what kind of test cases are there. Each test c
 
 {% image blog/blog-rat-serenity-results-slideshow.png %}
 
-In this test case we wanted to check if an image that was uploaded for a product is appearing in the product slideshow. The first step gives us a DemoShop (which can be newly created or was already used in other read-only test cases). Then we take the first product from the product collection resource (*GET /products*) and upload the image. Finally we retrieve the product slideshow (*GET /products/{productId}/slideshow*) and check if the uploaded image is in there.
+In this test case we wanted to check if an image that was uploaded for a product is appearing in the product slideshow. The first step gives us a DemoShop (which could be newly created or re-used from other read-only test cases). Then we take the first product from the product collection resource (*GET /products*) and upload the image. Finally we retrieve the product slideshow (*GET /products/{productId}/slideshow*) and check if it contains the uploaded image.
 
 
 
 ## Summary
 
-RAT allows us to check the complete state of the REST API on an abritrary ePages installation just at the push of a button. We use it to partly automate our QA process and run it as last step of a developer installation via Jenkins to make sure everything went fine. RAT takes over repetitive tasks and guarantees a certain level of quality - we can spend the saved time on improving our test infrastructure and on the implementation of further test cases.
+RAT allows us to check the complete state of the REST API on an arbitrary ePages installation just at the push of a button. We use it to partly automate our QA process and run it as last step of a developer installation via Jenkins to make sure everything went fine. RAT takes over repetitive tasks and guarantees a certain level of quality - we can spend the saved time on improving our test infrastructure and on the implementation of further test cases.
 
 Currently we discuss how to include RAT in the Jenkins job that checks our GitHub pull requests for new features in the Perl or Java repository. The challenge here is to choose the RAT branch that corresponds with the changes in the branch from the pull request.
