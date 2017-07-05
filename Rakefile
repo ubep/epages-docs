@@ -1,5 +1,6 @@
 # encoding: utf-8
-require 'html/proofer'
+require 'yaml'
+require 'fileutils'
 
 class String
   # colorization
@@ -60,7 +61,9 @@ task :test do
       errors = []
       files.each do |file|
         errors += check_line_endings(file)
-        errors += check_trailing_whitespaces(file)
+        if !(File.basename(file).end_with?(".md"))
+          errors += check_trailing_whitespaces(file)
+        end
         errors += check_indentation(file)
         errors += check_filename(file)
       end
@@ -141,35 +144,10 @@ task :test do
 end
 
 task :test do
-  class UnresolvedReferencesLinkCheck < HTML::Proofer::Checkable
-    attr_reader :href
-
-    def unresolved_reference?
-      if @href =~ /([a-z0-9\-]+):([a-z0-9\-]+)(#(.+))?/
-        case $1
-          when 'mailto'
-            false
-          else
-            return 'true'
-        end
-      end
-    end
-  end
-
-  class UnresolvedReferences < HTML::Proofer::CheckRunner
-    def run
-      @html.css('a').each do |l|
-        link = UnresolvedReferencesLinkCheck.new l, self
-
-        if link.unresolved_reference?
-          return add_issue("There is an unresolvable reference to #{link.href}")
-        end
-      end
-    end
-  end
+  require 'html-proofer'
 
   sh "bundle exec jekyll build"
-  HTML::Proofer.new("./_site", :disable_external => true, :href_ignore => ["#"]).run
+  HTMLProofer.check_directory("./_site", :disable_external => true, :assume_extension => true, :href_ignore => ["#"]).run
 end
 
 task :ramlup do
@@ -250,8 +228,7 @@ task :resource do
   SITEMAP_FILE = '_data/sitemap-apps.yml'
   MISC_FILE    = '_raml/apps/miscellaneous.raml'
   RESOURCE_DIR = 'apps/api-reference/'
-  require 'yaml'
-  require 'fileutils'
+
   require 'active_support/inflector'
 
   def new_resource(resources)
@@ -315,6 +292,12 @@ title: #{resource.capitalize.pluralize}
       <li class=\"resource-entry\">
         <span class=\"http-method http-method-{{ page.raml_method.method | downcase }}\">{{ page.raml_method.method }}</span>
         <a href=\"{{ page.url | prepend: site.baseurl }}\">{{ page.raml_resource.relative_uri }}</a>
+        {% if page.raml_method.description contains '*epages6' %}
+          <span class='ep-label-6 ep-label'>ePages 6</span>
+        {% endif %}
+        {% if page.raml_method.description contains '*epagesNow' %}
+          <span class='ep-label-now ep-label'>ePages Now</span>
+        {% endif %}
       </li>
     {% endif %}
   {% endfor %}
@@ -338,6 +321,12 @@ title: Miscellaneous
         <li class=\"resource-entry\">
           <span class=\"http-method http-method-{{ page.raml_method.method | downcase }}\">{{ page.raml_method.method }}</span>
           <a href=\"{{ page.url | prepend: site.baseurl }}\">{{ page.raml_resource.relative_uri }}</a>
+          {% if page.raml_method.description contains '*epages6' %}
+            <span class='ep-label-6 ep-label'>ePages 6</span>
+          {% endif %}
+          {% if page.raml_method.description contains '*epagesNow' %}
+            <span class='ep-label-now ep-label'>ePages Now</span>
+          {% endif %}
         </li>
       {% endif %}
     {% endfor %}
@@ -356,14 +345,63 @@ title: Miscellaneous
   new_miscellaneous(ENV['misc'].split(",")) if ENV['misc']
 end
 
-task :index do
-  sh "bundle exec jekyll index"
+task :archive do
+  API_REFERENCES = '_raml'
+  API_DOC        = 'apps'
+  API_VERSIONS   = '_data/api-versions.yml'
+  VERSION        = "v-#{ENV['version']}"
+
+  references_dest = "#{API_REFERENCES}/#{VERSION}"
+  doc_dest = "#{API_DOC}/#{VERSION}"
+
+  def copy_resources(src, dest)
+    sh "rsync -a --exclude 'v-*' #{src}/ #{dest}"
+  end
+
+  def change_file_keys(paths)
+    files = Dir["#{paths}/**/*.md"]
+    files.each do |file_name|
+      text = File.read(file_name)
+      new_contents = text.gsub(/key: (.*)/, "key: \\1-#{VERSION}")
+      File.open(file_name, "w") {|file| file.puts new_contents }
+    end
+  end
+
+  def update_versions
+    content = YAML.load_file(API_VERSIONS)
+    content['versions'].nil? ?
+      content['versions'] = [{'title' => ENV['version']}] :
+      content['versions'] << {'title' => ENV['version']}
+    File.write(API_VERSIONS, YAML.dump(content))
+  end
+
+  raise ArgumentError, "Version not passed as parameter \n Usage:\n > rake release version=my_version" unless ENV['version']
+
+  update_versions
+
+  copy_resources(API_REFERENCES, references_dest)
+
+  copy_resources(API_DOC, doc_dest)
+  change_file_keys(doc_dest)
 end
 
 task :build do
-  sh "bundle exec jekyll build -t"
+  sh "bundle exec jekyll build -t -q --config '_config.yml'"
+end
+
+task :serve do
+  sh "bundle exec jekyll serve --host 0.0.0.0 --watch --config '_config.yml'"
+end
+
+task :dev do
+  sh "bundle exec jekyll serve --host 0.0.0.0 --watch --incremental --config '_dev_config.yml'"
+end
+
+task :fast_dev do
+  sh "bundle exec jekyll serve --host 0.0.0.0 --watch --incremental --skip-initial-build --config '_dev_config.yml'"
 end
 
 task :default do
-  sh "bundle exec jekyll serve --host 0.0.0.0 --watch"
+  Rake::Task["build"].invoke
+  Rake::Task["serve"].invoke
 end

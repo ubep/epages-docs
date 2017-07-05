@@ -18,7 +18,7 @@ However, due to internal technical reasons, in the 4xx and 5xx range HTML respon
 |---------------|---------------| -------|
 | 200       | OK                | This is the standard response for a successful HTTP request.
 | 201       | Created           | The request has been fulfilled and resulted in a new resource being created, e.g a cart.
-| 204       | No&nbsp;Content   | The server successfully processed the request, but is not returning any content. Typically used as a response to a successful delete request.
+| 204       | No&nbsp;Content   | The server successfully processed the request, but is not returning any content. Typically used as a response to a successful `DELETE` request.
 
 ### Example response
 
@@ -49,6 +49,8 @@ X-epages-Media-Type: application/vnd.epages.v1+json
 | 404      | Not&nbsp;Found     | The requested resource or item could not be found, but may be available in future, e.g. a product has been requested, that is not available.
 | 405      | Method&nbsp;Not&nbsp;Allowed | A request was made of a resource using a request method not supported by that resource, e.g. using a `POST` on a resource that requires a `GET`.
 | 406      | Not&nbsp;Acceptable| The content negotiation between client and server failed. As ePages uses the Accept header to specify the API version, it requires the client to send exactly this header for the respective version of the REST API. So for the currently existing version v1, this is `Accept: application/vnd.epages.v1+json`. The server response for the content-type is always `application/json` unless stated otherwise.
+| 409      | Conflict | The request could not be processed because of a conflict in the request, e.g. using a `PATCH` on an order, that is in edit mode.
+| 410      | Gone | The resource requested is no longer available and will not be available again, e.g. when a cart became an order.
 | 429      | Too Many Requests  | Too many requests have been sent to the API in a given amount of time. The API call limit has been exceeded, see also [API call limit](page:apps-api-call-limit).
 
 ### Example response

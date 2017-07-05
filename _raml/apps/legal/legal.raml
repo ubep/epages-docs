@@ -1,8 +1,7 @@
 #%RAML 0.8
 displayName: Legal information
-description: Summary of legal information for a shop.
 get:
-  description: Returns hyperlinks of legal information for a shop.
+  description: Returns hyperlinks of legal information for a shop. *epages6 *epagesNow
   securedBy: [legal_read]
   is: [ locale ]
   responses:
@@ -13,9 +12,8 @@ get:
           schema: !include schema/get_legal.schema.json
 /contact-information:
   displayName: Contact information
-  description: The contact information of a shop.
   get:
-    description: Returns the contact information of a shop.
+    description: Returns the contact information of a shop. *epages6
     securedBy: [legal_read]
     is: [ locale ]
     responses:
@@ -25,12 +23,13 @@ get:
             example: !include examples/get_legal_contact_response.json
             schema: !include schema/get_legal_contact.schema.json
   put:
-    description: Modifies the contact information of a shop.
+    description: Modifies the contact information of a shop. *epages6
     securedBy: [legal_write]
     is: [ localeMandatory ]
     body:
       application/json:
         example: !include examples/put_legal_contact_request.json
+        schema: !include schema/put_legal_contact_request.schema.json
     responses:
       200:
         body:
@@ -40,9 +39,8 @@ get:
 
 /privacy-policy:
     displayName: Privacy policy
-    description: Retrieve the privacy policy of a shop.
     get:
-      description: Returns the privacy policy of a shop.
+      description: Returns the privacy policy of a shop. *epages6
       securedBy: [legal_read]
       is: [ locale ]
       responses:
@@ -53,12 +51,13 @@ get:
               schema: !include schema/get_legal_privacy.schema.json
 
     put:
-      description: Modifies the privacy policy of a shop.
+      description: Modifies the privacy policy of a shop. *epages6
       securedBy: [legal_write]
       is: [ localeMandatory ]
       body:
         application/json:
           example: !include examples/put_legal_privacy_request.json
+          schema: !include schema/put_legal_privacy_request.schema.json
       responses:
         200:
           body:
@@ -68,9 +67,8 @@ get:
 
 /terms-and-conditions:
   displayName: Terms and conditions
-  description: The terms and conditions of a shop.
   get:
-    description: Returns the terms and conditions of a shop.
+    description: Returns the terms and conditions of a shop. *epages6
     securedBy: [legal_read]
     is: [ locale ]
     responses:
@@ -80,12 +78,13 @@ get:
             example: !include examples/get_legal_terms_response.json
             schema: !include schema/get_legal_terms.schema.json
   put:
-    description: Modifies the terms and conditions of a shop.
+    description: Modifies the terms and conditions of a shop. *epages6
     securedBy: [legal_write]
     is: [ localeMandatory ]
     body:
       application/json:
         example: !include examples/put_legal_terms_request.json
+        schema: !include schema/put_legal_terms_request.schema.json
     responses:
       200:
         body:
@@ -95,9 +94,8 @@ get:
 
 /rights-of-withdrawal:
     displayName: Rights of withdrawal
-    description: Retrieve the rights of withdrawal of a shop.
     get:
-      description: Returns the customer rights of withdrawal of a shop.
+      description: Returns the customer rights of withdrawal of a shop. *epages6
       securedBy: [legal_read]
       is: [ locale ]
       responses:
@@ -107,12 +105,13 @@ get:
               example: !include examples/get_legal_rights_response.json
               schema: !include schema/get_legal_rights.schema.json
     put:
-      description: Modifies the customer rights of withdrawal of a shop.
+      description: Modifies the customer rights of withdrawal of a shop. *epages6
       securedBy: [legal_write]
       is: [ localeMandatory ]
       body:
         application/json:
           example: !include examples/put_legal_rights_request.json
+          schema: !include schema/put_legal_rights_request.schema.json
       responses:
         200:
           body:
@@ -122,9 +121,8 @@ get:
 
 /shipping-information:
     displayName: Shipping information
-    description: Retrieve the shipping terms and conditions of a shop.
     get:
-      description: Returns detailed information on possible shipping types and the costs incurred. Also displays the costs for shipment abroad.
+      description: Returns detailed information on possible shipping types and the costs incurred. Also displays the costs for shipment abroad. *epages6
       securedBy: [legal_read]
       is: [ locale ]
       responses:
@@ -135,12 +133,13 @@ get:
               schema: !include schema/get_legal_shipping.schema.json
 
     put:
-      description: Modifies the shipping information of a shop.
+      description: Modifies the shipping information of a shop. *epages6
       securedBy: [legal_write]
       is: [ localeMandatory ]
       body:
         application/json:
           example: !include examples/put_legal_shipping_request.json
+          schema: !include schema/put_legal_shipping_request.schema.json
       responses:
         200:
           body:

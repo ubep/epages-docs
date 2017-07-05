@@ -2,8 +2,7 @@
 layout: post
 title: "#refugeehackathon"
 date: "2015-10-27 12:00:00"
-icon: flag
-categories: hackathon
+categories: events
 authors: ["Jan"]
 ---
 
@@ -14,7 +13,7 @@ This blog post is a report about participating in the #refugeehackathon in Berli
 
 ## Overview of the event
 
-The [#refuggeehackathon](https://twitter.com/search?src=typd&q=%23refugeehackathon) started on Friday, 24th October 2015 with a requirements workshop.
+The [#refugeehackathon](https://twitter.com/search?src=typd&q=%23refugeehackathon) started on Friday, 24th October 2015 with a requirements workshop.
 A small group of people visited the refugees and talked about project ideas which could be helpful for them.
 The official start was on Saturday morning.
 After some welcoming words, a short video about the challenging situation of refugees travelling through Europe was shown.
@@ -29,7 +28,7 @@ It is an online platform which enables volunteers to sign up for tasks identifie
 by different aid organisations and is created by a handful of programmers, designers and project managers.
 Though the project is only three month old and thus not yet feature complete they already have 19,354 registered users and 51,286 completed volunteer work hours.
 
-{% image blog-refugeehackathon-volunteer-planner.jpg %}{% endimage %}
+{% image blog/blog-refugeehackathon-volunteer-planner.jpg %}
 
 ## What we achieved
 

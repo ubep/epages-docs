@@ -28,18 +28,38 @@ securitySchemes:
 
 traits: !include traits.raml
 
-/shops/{shopId}:
+/{shopId}:
+  displayName: Shop information
   uriParameters:
     shopId:
       description: The unique identifier of the shop.
       example: DemoShop
-  /carts: !include cart/carts.raml
+  get:
+    description: Returns the public information of a shop, like name, slogan and logo. *epages6 *epagesNow
+    securedBy: [products_read]
+    is: [locale]
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include get_shopid_response.json
+            schema: !include get_shopid.schema.json
+  /carts: !include carts/carts.raml
   /categories: !include categories/categories.raml
   /currencies: !include currency/currency.raml
+  /customers: !include customers/customers.raml
   /legal: !include legal/legal.raml
   /locales: !include locale/locale.raml
+  /newsletter-campaigns: !include newsletter/newsletter-campaigns.raml
   /orders: !include orders/orders.raml
-  /products: !include product/product.raml
-  /products/export: !include productportals/productportals.raml
+  /products: !include products/products.raml
+  /product-category-assignments: !include product-category-assignments/product-category-assignments.raml
+  /products/export: !include productexport/productexport.raml
+  /sales: !include sales/sales.raml
+  /script-tags: !include scripttags/script-tags.raml
   /search: !include search/search.raml
-  /shipping-methods: !include shipping-method/shipping-method.raml
+  /shipping-methods: !include shipping-methods/shipping-methods.raml
+  /tax-classes: !include tax-classes/tax-classes.raml
+  /tax-model: !include tax-model/tax-model.raml
+  /watched-products: !include watched-products/watched-products.raml
+  /webhooks: !include webhooks/webhooks.raml

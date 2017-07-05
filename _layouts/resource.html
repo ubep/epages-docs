@@ -11,17 +11,20 @@ layout: page
 <pre>{{ page.raml_method.method }} {{ page.raml_resource.relative_uri }}</pre>
 
 {% if page.raml_method.description != null %}
-  <p>{{ page.raml_method.description | markdownify }}</p>
+  <p>{{ page.raml_method.description | delete_epages_version | markdownify }}</p>
 {% endif %}
 
-<strong>Authorisation</strong>
-  <p>OAuth 2.0 Token required with scopes: </p>
-  {% assign authorization = page.raml_method.secured_by | shift: 2 %}
-  {% for scope in authorization %}
-    <input type="checkbox" value="{{ scope }}" checked onclick="return false" style="margin-left: 15px"> {{ scope }}<br>
-  {% endfor %}
 
-{% if page.raml_resource.uri_parameters. != empty %}
+{% assign authorization = page.raml_method.secured_by | shift: 2 %}
+{% if authorization != empty %}
+  <strong>Authorisation</strong>
+    <p>OAuth 2.0 Token required with scopes: </p>
+  {% for scope in authorization %}
+      <input type="checkbox" value="{{ scope }}" checked onclick="return false" style="margin-left: 15px"> {{ scope }}<br>
+  {% endfor %}
+{% endif %}
+
+{% if page.raml_resource.uri_parameters != empty %}
   <h2 id="uri-parameters">URI parameters</h2>
   <table class="table table-bordered">
     <thead>
@@ -35,8 +38,8 @@ layout: page
     {% for p_tmp in page.raml_resource.uri_parameters %}
       {% assign p = p_tmp[1] %}
       <tr>
-        <td><code>{{ p.name. }}</code></td>
-        <td><strong>{{ p.type. }}</strong></td>
+        <td><code>{{ p.name }}</code></td>
+        <td><strong>{{ p.type }}</strong></td>
         <td>
           {% if p.description %}<div>{{ p.description | markdownify }}</div>{% endif %}
           <div>Required: <code>{{ p.required }}</code></div>
@@ -67,15 +70,15 @@ layout: page
     {% for p_tmp in page.raml_method.query_parameters %}
       {% assign p = p_tmp[1] %}
       <tr>
-        <td><code>{{ p.name. }}</code></td>
-        <td><strong>{{ p.type. }}</strong></td>
+        <td><code>{{ p.name }}</code></td>
+        <td><strong>{{ p.type }}</strong></td>
         <td>
           {% if p.description %}<div>{{ p.description | markdownify }}</div>{% endif %}
           <div>Required: <code>{{ p.required }}</code></div>
           {% if p.example %}<div>Example: <code>{{ p.example }}</code></div>{% endif %}
           {% if p.default %}<div>Default: <code>{{ p.default }}</code></div>{% endif %}
-          {% if p.minimum %}<div>Minimum: {{ p.minimum }}</div>{% endif %}
-          {% if p.maximum %}<div>Maximum: {{ p.maximum }}</div>{% endif %}
+          {% if p.minimum %}<div>Minimum: <code>{{ p.minimum }}</code></div>{% endif %}
+          {% if p.maximum %}<div>Maximum: <code>{{ p.maximum }}</code></div>{% endif %}
           {% if p.repeat %}<div>Repeat: <code>{{ p.repeat | join:',' }}</code></div>{% endif %}
           {% if p.enum != empty %}<div>Enum: <code>{{ p.enum | join:',' }}</code></div>{% endif %}
         </td>
@@ -86,12 +89,58 @@ layout: page
 {% endif %}
 
 {% if page.raml_method.bodies != empty %}
+  {% for body_tmp in page.raml_method.bodies %}
+    {% assign body = body_tmp[1] %}
+    {% if body.media_type contains 'application/json' and body.schema != null %}
+      <h2 id="request-body">Request attributes</h2>
+      <table class="table table-bordered table-striped">
+        <thead style="background-color: white;">
+          <tr><th>Name</th><th>Type</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          {% assign keys = body.schema | json_keys: 'properties' %}
+          {% assign properties = body.schema | json_field: 'properties' %}
+          {% for key in keys %}
+            {% assign p = properties[key] %}
+            <tr>
+              <td><code>{{ key }}</code></td>
+              <td>{% if p.type %}{{ p.type | markdownify }}{% endif %}</td>
+              <td>{% if p.description %}<div>{{ p.description | markdownify }}</div>{% endif %}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{% if page.raml_method.bodies != empty %}
   <h2 id="request-body">Request body</h2>
   {% for body_tmp in page.raml_method.bodies %}
     {% assign body = body_tmp[1] %}
     <p>Media type <code>{{ body.media_type }}</code></p>
     {% if body.example %}
-      <pre class="pre-scrollable">{{ body.example }}</pre>
+      <pre>{{ body.example | xml_escape }}</pre>
+    {% endif %}
+    {% if body.media_type == 'multipart/form-data' or body.media_type == 'application/x-www-form-urlencoded' %}
+      <table class="table table-bordered table-striped">
+        <thead style="background-color: white;">
+        <tr><th>Name</th><th>Type</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+        {% for elem in body.form_parameters %}
+          {% assign param = elem[1] %}
+          <tr>
+            <td><code>{{ param.name }}</code></td>
+            <td><strong>{{ param.type }}</strong></td>
+            <td>
+              <div>{{ param.description | markdownify }}</div>
+              <div>Required: <code>{{ p.required }}</code></div>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
     {% endif %}
   {% endfor %}
 {% endif %}
@@ -102,7 +151,7 @@ layout: page
     {% if schema != null %}
       {% assign no_table = schema | json_keys: 'properties' | first  %}
       {% assign response = schema | json_field: 'properties' | first %}
-      <h2 id="response-attributes">Response Attributes</h2>
+      <h2 id="response-attributes">Response attributes</h2>
       {% if no_table == "no_table" %}
         {{ response.last | markdownify }}
       {% else %}
@@ -136,21 +185,7 @@ layout: page
     {% for body_tmp in res.bodies %}
       {% assign body = body_tmp[1] %}
       <p>Media type <code>{{ body.media_type }}</code></p>
-      {% if body.example %}<pre class="pre-scrollable">{{ body.example | xml_escape }}</pre>{% endif %}
+      {% if body.example %}<pre>{{ body.example | xml_escape }}</pre>{% endif %}
     {% endfor %}
   {% endfor %}
 {% endif %}
-
-<h2 id="code-examples">Code examples</h2>
-<div role="tabpanel">
-  <ul class="nav nav-tabs" role="tablist">
-    {% for snippet in page.raml_snippets %}
-      <li role="presentation" {% if forloop.first %}class="active"{% endif %}><a href="#{{ snippet['title'] | slugify }}" aria-controls="{{ snippet['title'] | slugify }}" role="tab" data-toggle="tab">{{ snippet['title'] }}</a></li>
-    {% endfor %}
-  </ul>
-  <div class="tab-content">
-    {% for snippet in page.raml_snippets %}
-      <div role="tabpanel" class="tab-pane {% if forloop.first %}active{% endif %}" id="{{ snippet['title'] | slugify }}"><p><pre>{{ snippet['snippet'] }}</pre></p></div>
-    {% endfor %}
-  </div>
-</div>

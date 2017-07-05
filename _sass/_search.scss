@@ -26,12 +26,12 @@
 }
 
 #search-results {
-  list-style: none;
   padding: 0;
   margin: 10px 0;
 }
 
 .search-result {
+  list-style: none;
   padding: 0;
   margin: 10px 0;
 }
@@ -67,8 +67,8 @@
   height: 36px;
 
   &:hover, &:active, &:focus {
-    background-color: darken( $green, 5%);
-    border: 1px solid darken( $green, 5%);
+    background-color: darken($green, 2);
+    border: 1px solid darken($green, 2);
     color: #fff;
     text-decoration: none;
   }

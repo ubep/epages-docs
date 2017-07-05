@@ -1,3 +1,9 @@
+- key: blog-about
+  title: About
+  entries:
+    - title: "Who we are"
+      link: /about/
+
 - key: blog-categories
   title: Categories
   entries:
@@ -7,17 +13,11 @@
     - title: API
       link: page:blog-category-api
 
-    - title: Conferences
-      link: page:blog-category-conferences
-
     - title: Events
       link: page:blog-category-events
 
-    - title: Hackathon
-      link: page:blog-category-hackathon
-
-    - title: Jobs
-      link: page:blog-category-jobs
+    - title: Working at ePages
+      link: page:blog-category-working-at-epages
 
     - title: Tech Stories
       link: page:blog-category-tech-stories
@@ -26,10 +26,7 @@
   title: Links
   entries:
     - title: API docu
-      link: https://developer.epages.com/
-
-    - title: devjobs
-      link: http://www.epages.com/devjobs
+      link: https://developer.epages.com/apps
 
     - title: epages.com
       link: http://www.epages.com/

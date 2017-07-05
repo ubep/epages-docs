@@ -2,7 +2,7 @@
 layout: post
 title: "Creating systems with pipelining"
 date: "2015-08-03"
-icon: wrench
+image: blog-header/pipelines.jpg
 categories: tech-stories
 authors: ["Carsten", "Karsten"]
 ---
@@ -13,13 +13,13 @@ We are integrating many steps using different tools to reach a specific goal: cr
 This system can be used for development purposes, external or even live deployment.
 The setup used here is a combination of different software and tools.
 One of them is [vmware](http://www.vmware.com/) with [vCenter](https://www.vmware.com/products/vcenter-server) and some [ESXi](https://www.vmware.com/products/vsphere/features/esxi-hypervisor) servers to offer and manage systems in a virtual environment.
-Another tool we use is called [i-doit](http://www.i-doit.org/) and is used for creation and documentation of inventories and network related information.
-As you may have read in a previous [post](https://developer.epages.com/blog/2015/06/25/infrastructure-as-code.html) we often use [Jenkins](https://jenkins-ci.org/) for [Continuous Integration](http://www.martinfowler.com/articles/continuousIntegration.html), so it's one of our favourite tools to automate processes.
+Another tool we use is called [i-doit](https://www.i-doit.com/en/) and is used for creation and documentation of inventories and network related information.
+As you may have read in a previous [post](https://developer.epages.com/blog/2015/06/25/infrastructure-as-code-automating-jenkins.html) we often use [Jenkins](https://jenkins-ci.org/) for [Continuous Integration](http://www.martinfowler.com/articles/continuousIntegration.html), so it's one of our favourite tools to automate processes.
 The key of an automated OS install is the combination of [iPXE](http://ipxe.org/) and kickstart isos, for example preseed values for [Debian](https://wiki.debian.org/DebianInstaller/Preseed) or [Centos/RHEL](http://www.centos.org/docs/4/html/rhel-sag-en-4/s1-kickstart2-file.html).
 Last but not least when it comes to system specialisation [Linux](https://www.linux.com/) itself should be mentioned.
 To speak with the different interfaces, programming languages like [`Perl`](https://www.perl.org/) and [`Python`](https://www.python.org/) or scripting languages like [`PHP`](https://secure.php.net/) and [`bash`](http://www.gnu.org/software/bash/) are used.
 
-{% image blog-pipeline-tools.png %} {% endimage %}
+{% image blog/blog-pipeline-tools.png %}
 
 The basic idea is simple. First thing we need is a system.
 
@@ -57,6 +57,9 @@ In our situation it depends on the use case. For example internal development sy
 Here is a simplified picture of the whole pipeline.
 The full process lasts about 10 to 15 minutes but depends on the specific configuration you choose.
 
-{% image blog-pipeline-jenkins.png %} {% endimage %}
+{% image blog/blog-pipeline-jenkins.png %}
 
 In the future we'd like to use the existing build pipelines to create distributed systems with our and other software.
+
+Questions about this post?
+Please contact [am@am.epages.com](mailto:am@am.epages.com).

@@ -23,21 +23,19 @@ In order to get this code working, you need to setup your development environmen
 
 Simply sign up [here](http://www.epages.cloud/developer/) for a free account.
 
-### Create a developer app
+### Create an app
 
-In order to create an app, to test it and to submit it to the App & Theme Store, you have to create a developer app.
-
-Go to the **Developer apps** view on the tab **Apps & Themes** and [create a new developer app](page:apps-create) by clicking **Add**.
+In order to create an app, to test it and to submit it to the App Store, you have to [create an app](page:apps-create).
 
 After choosing a name to your liking, you need to set the **Application Callback URL** to your publicly available PHP script (e.g. `https://crazytoppingapp.com/callback.php`), which we will implement later.
 
 {% callout info Note: %}
-We allow HTTP Application Callback URLs for developer apps, but you need to provide an HTTPS URL once you want to submit the app to the App & Theme Store.
+We allow HTTP Application Callback URLs for apps, but you need to provide an HTTPS URL once you want to submit the app to the App Store.
 {% endcallout %}
 
 Once you are done with that, the detail page will show your client credentials.
 
-{% image developer-app-details.png %}{% endimage %}
+{% image developer-app-details.png %}
 
 As you can see, there is no **Access token** right away.
 You have to go through the [installation process](page:apps-install) first to acquire one.
@@ -58,7 +56,7 @@ We will create the mentioned `callback.php` file, which will be called when a us
 
 ### Setting credentials
 
-The first thing we will do is set the **client credentials** (`client_id` and `client_secret`) you got from the developer app detail page.
+The first thing we will do is set the **client credentials** (`client_id` and `client_secret`) you got from the apps detail page.
 
     <?php
 
@@ -68,7 +66,7 @@ The first thing we will do is set the **client credentials** (`client_id` and `c
 ### Listen for callback
 
 Next, you need to listen for a request to get the `authorization_code`, which you can exchange for an access token.
-The call, which you can trigger with the **Test authorisation** button, will look like this:
+The call, which you can trigger by clicking **Test authorisation**, will look like this:
 
 https://crazytoppingapp.com/callback.php?code=*{authorization_code}*&access_token_url=*{access_token_url}*&api_url=*{api_url}*
 
@@ -84,9 +82,9 @@ In a production environment, you would use the `api_url` as the unique identifie
 You will also use it as the base URL for REST calls.
 {% endcallout %}
 
-### Exchange authorisation code for access token
+### Exchange authorization code for access token
 
-Now we need to exchange the **authorisation code** for the access token.
+Now we need to exchange the **authorization code** for the access token.
 We will create a function called `get_token()`, which will need the **client credentials**, the `access_token_url` and the `code` and will just print the `access_token` as a response.
 
     $access_token = get_token($access_token_url, $client_id, $client_secret, $code);
@@ -129,6 +127,7 @@ After a successful request, we receive a JSON-encoded response and return the ex
             CURLOPT_URL => $url,
             CURLOPT_POST => 1,
             CURLOPT_HEADER => "Content-Type: application/x-www-form-urlencoded",
+            CURLOPT_USERAGENT => "my-awesome-uniquely-identifiable-client/1.0",
             CURLOPT_POSTFIELDS => $post_content,
             CURLOPT_RETURNTRANSFER => TRUE
         );

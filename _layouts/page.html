@@ -4,74 +4,68 @@ layout: default
 
 {% assign chapter = page.url | regex_extract: '^/([^/]+)/' %}
 {% assign sitemap = chapter | sitemap %}
+{% if page.header %}
+  {% assign title = page.header %}
+{% elsif page.title %}
+  {% assign title = page.title %}
+{% elsif chapter == 'apps' %}
+  {% assign title = 'API reference' %}
+{% elsif chapter == 'blog' %}
+  {% assign title = 'Developer blog'  %}
+{% endif %}
 
-{% unless page.hide_searchbar %}
-  {% if page.landingpage %}
-    <div id="landingpage">
-      <div id="landingpage-banner">
-        <div id="landingpage-banner-headline">{{ page.landingpage.title }}</div>
-        <div id="landingpage-banner-text">{{ page.landingpage.text }}</div>
-        <div id="landingpage-banner-search">
-          <form method="get" action="{{ '/search.html' | prepend: chapter | prepend: '/' | prepend: site.baseurl }}" autocomplete="off">
-            <div class="row">
-              <div class="col-sm-9">
-                <input id="search-box" type="text" name="q" placeholder="Enter your search here" class="form-control"/>
-              </div>
-              <div class="col-sm-3">
-                <button type="submit" class="btn btn-block btn-search">Search</button>
-              </div>
-            </div>
-          </form>
-        </div>
+<header id="header" class="jumbotron"
+  {% if page.image %}style="background: linear-gradient(rgba(50, 50, 50, 0.4), rgba(50, 50, 50, 0.15)), url('/assets/images/{{ page.image }}')"
+  {% elsif page.categories and page.key !="apps-glossary" %}
+    {% assign category = page.categories | first %}
+    style="background: linear-gradient(rgba(50, 50, 50, 0.4), rgba(50, 50, 50, 0.15)), url('/assets/images/blog/categories/{{ category }}.jpg')"
+  {% endif %}>
+  <h1>{{ title }}</h1>
+  {% if page.date and page.authors %}<h3 class="subtitle">{{ page.date | date: "%b %-d, %Y" }} authored by {{ page.authors | join: ' and ' }}</h3>{% endif %}
+  {% if chapter == 'apps' and page.key != 'apps-faq' %}
+    <form method="get" action="https://google.com/search" autocomplete="off">
+      <div class="input-group">
+        <input type="text" class="form-control" name="q" placeholder="Enter your search here" required/>
+        <input type="hidden" name="as_sitesearch" value="developer.epages.com"/>
+        <button class="cta" type="submit">Search</button>
       </div>
-    </div>
-  {% else %}
-    <div id="landingpage">
-      <div id="landingpage-banner" class="landingpage-banner-small">
-        <div id="landingpage-banner-search" style="padding: 1rem;">
-          <form method="get" action="{{ '/search.html' | prepend: chapter | prepend: '/' | prepend: site.baseurl }}" autocomplete="off">
-            <div class="row">
-              <div class="col-sm-9">
-                <input id="search-box" type="text" name="q" placeholder="Enter your search here" class="form-control"/>
-              </div>
-              <div class="col-sm-3">
-                <button type="submit" class="btn btn-block btn-search">Search</button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+    </form>
   {% endif %}
-{% endunless %}
-<div id="content">
+</header>
+
+<div id="content" class="{% if chapter == 'blog' %} blog{% endif %}{% if page.date and page.authors %} blog-preview{% endif %}">
   <div class="container">
-    <div class="row">
-      {% unless page.hide_sitemap %}
-        <div class="col-sm-3 hidden-xs">
-          <ul id="sitemap">
-          {% for category in sitemap %}
-            <li class="sitemap-headline">{{ category.title }}</li>
-            {% for entry in category.entries %}
-              <li class="sitemap-entry">{% sitemap_link entry %}</li>
-            {% endfor %}
-          {% endfor %}
-          </ul>
-        </div>
-        <div class="col-sm-9">
-      {% endunless %}
+    {% unless page.hide_sitemap %}
+      <div class="contentnav">
+        <ul id="sitemap">
+          {% include_cached sitemap.html sitemap=sitemap %}
+          {% if chapter == 'blog' %}
+            {% if page.title %}
+              <li class="sitemap-headline social-media">Share<br />
+                <ul class="socialmedia">
+                  <li class="twitter"><a href="https://twitter.com/intent/tweet?text={{ page.title | cgi_escape }}&url={{ page.url | prepend: site.url }}&via=epagesdevs&tw_p=tweetbutton" target="_blank" title="Share via Twitter"><span class="icon-twitter"></span></a></li>
+                  <li class="facebook"><a href="https://www.facebook.com/sharer/sharer.php?u={{ page.url | prepend: site.url }}" target="_blank"><span class="icon-facebook" title="Share via Facebook"></span></a></li>
+                  <li class="googleplus"><a href="https://plus.google.com/share?url={{ page.url | prepend: site.url }}" target="_blank"><span class="icon-googleplus" title="Share via Google+"></span></a></li>
+                </ul>
+              </li>
+            {% else %}
+              <li class="sitemap-headline rss-feed">RSS feed<br />
+                <ul class="socialmedia">
+                  <li class="rss"><a href="/blog/feed.xml" target="_blank"><i class="fa fa-fw fa-rss"></i></a></li>
+                </ul>
+              </li>
+            {% endif %}
+          {% endif %}
+        </ul>
+      </div>
+    {% endunless %}
+    <div class="content-inner">
       <article>
-        {% if page.title %}
-          <div class="page-header">
-            <h1 class="title">{{ page.title }}</h1>
-          </div>
-        {% endif %}
         {{ content }}
       </article>
-      {% unless page.hide_sitemap %}
-        </div>
-      {% endunless %}
+      {% include pagination.html %}
     </div>
-    {% include pagination.html %}
   </div>
 </div>
+
+{% include_cached api-versioning.html %}

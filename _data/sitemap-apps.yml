@@ -19,14 +19,29 @@
     - title: Response codes
       link: page:apps-response-codes
 
-    - title: Versions
+    - title: API version
       link: page:apps-version
+
+    - title: App scopes
+      link: page:app-scopes
+
+- key: apps-custom
+  title: Custom apps
+  entries:
+    - title: Use cases
+      link: page:apps-use-cases
+
+    - title: Create an app
+      link: page:apps-create-custom
 
 - key: apps-develop
   title: Developing an app
   entries:
     - title: Use cases
       link: page:apps-use-cases
+
+    - title: Webhooks
+      link: page:apps-webhooks
 
     - title: Create an app
       link: page:apps-create
@@ -46,13 +61,13 @@
 - key: apps-integrate
   title: Integrations
   entries:
-    - title: API PHP client
+    - title: PHP SDK
       link: page:apps-php-client
 
-    - title: API Ruby gem
+    - title: Ruby SDK
       link: page:apps-ruby-gem
 
-    - title: CMS plugin
+    - title: CMS widget
       link: page:apps-cms-plugin
 
 - key: api-rest
@@ -70,11 +85,17 @@
     - title: Categories
       link: page:api-resources-categories
 
+    - title: Customers
+      link: page:api-resources-customers
+
     - title: Legal
       link: page:api-resources-legal
 
     - title: Miscellaneous
       link: page:api-resources-miscellaneous
+
+    - title: Newsletters
+      link: page:api-resources-newsletter-campaigns
 
     - title: Orders
       link: page:api-resources-orders
@@ -82,8 +103,20 @@
     - title: Products
       link: page:api-resources-products
 
+    - title: Sales
+      link: page:api-resources-sales
+
+    - title: Script tags
+      link: page:api-resources-script-tags
+
     - title: ShippingMethods
       link: page:api-resources-shipping-methods
+
+    - title: Taxes
+      link: page:api-resources-tax-classes
+
+    - title: Webhooks
+      link: page:api-resources-webhooks
 
 - key: more
   title: More
@@ -96,3 +129,4 @@
 
     - title: FAQ
       link: page:apps-faq
+

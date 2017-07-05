@@ -2,8 +2,7 @@
 layout: post
 title: "code.talks 2015 retrospective"
 date: "2015-10-07 09:00:00"
-icon: comments
-categories: conferences
+categories: events
 authors: ["Jens"]
 ---
 
@@ -17,7 +16,7 @@ Watching these talks on huge cinema screens while sitting in cozy chairs and eat
 
 Due to the huge amount of different talks, there was almost always at least one interesting session for everyone - more often than not it was a tough choice between two or more competing topics being presented at the same time.
 Between the talks there was time for meeting and networking with other visitors to exchange impressions and ideas.
-All the times there was more than enough excellent food and drinks provided; not only water, coffee and tea, but of course also [1337 mate](http://www.1337mate.com/) ;-)
+All the times there was more than enough excellent food and drinks provided; not only water, coffee and tea, but of course also [1337 mate](http://www.1337mate.com/) {% emoji wink %}.
 
 Those not already too exhausted by the intense first day had the opportunity to attend an exclusive party in the evening, also with vouchers for free drinks.
 At breakfast the next day you could clearly tell who had a tough night, but judging from the full conference rooms only a few visitors slept in.

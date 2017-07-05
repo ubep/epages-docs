@@ -1,10 +1,9 @@
 #%RAML 0.8
 displayName: Orders
-description: A completed request by a customer to purchase one or more products from a shop. An order is completed as soon as a customer completes the checkout process. By default the results for orders are sorted by creationDate.
 get:
-  description: Returns a list of orders.
+  description: Returns a list of orders. By default the results for orders are sorted by creationDate. *epages6 *epagesNow
   securedBy: [orders_read]
-  is: [ locale ]
+  is: [ locale, paged ]
   queryParameters:
     viewedOn:
       description: Returns orders where the status Viewed is set.
@@ -18,7 +17,7 @@ get:
       description: Returns orders where the status Archived is set.
       type: boolean
       required : false
-    cancelledOn:
+    rejectedOn:
       description: Returns orders where the status Rejected is set.
       type: boolean
       required : false
@@ -38,7 +37,7 @@ get:
       description: Returns orders where the status Returned is set.
       type: boolean
       required : false
-    shippedOn:
+    deliveredOn:
       description: Returns orders where the status Delivered is set.
       type: boolean
       required : false
@@ -59,7 +58,7 @@ get:
       type: string
       required : false
     updatedFrom:
-      description: Filters updated orders from this timestamp (format according to ISO 8601).
+      description: Filters updated orders from this timestamp (format according to ISO 8601).<br><br>Orders with edited product line items (quantity or price), added or removed product line items, changed shipping or payment method, changed billing address as well as changed, added or removed shipping address are also included when using this query parameter.
       type: string
       required : false
     createdBefore:
@@ -78,31 +77,58 @@ get:
     200:
       body:
         application/json:
-          example: !include examples/get_orders_response.json
-          schema: !include schema/get_orders.schema.json
+          example: !include examples/get_order_response.json
+          schema: !include schema/get_order.schema.json
 /{orderId}:
-  displayName: Order ID
-  description: Retrieve a specific order using its ID.
+  displayName: Order
   get:
-    description: Returns information for a single order.
+    description: Returns information for a single order identified by the provided order ID. *epages6 *epagesNow
     securedBy: [orders_read]
     is: [ locale ]
     responses:
       200:
         body:
           application/json:
-            example: !include examples/get_orders_orderid_response.json
-            schema: !include schema/get_orders_orderid.schema.json
-  put:
-    description: Modifies the order.
+            example: !include examples/get_order_orderid_response.json
+            schema: !include schema/get_order_orderid.schema.json
+  patch:
+    description: Updates information for a single order with partial data according to [RFC 6902](https://tools.ietf.org/html/rfc6902). You can either add or remove certain attributes. Note that an order cannot be updated once it is in edit mode. In that case, response code 409 will appear. *epages6 *epagesNow <br><br>
+
+        *Supported JSON-PATCH operations*<br>
+        - add (sets or replaces an attribute)<br>
+        - remove (unsets an attribute)<br><br>
+
+        *Attribute paths that allow updates via PATCH* ( **¹** supports *add* only)<br>
+              - /orderNumber¹<br>
+              - /customerComment<br>
+              - /internalNote<br>
+              - /billingAddress¹<br>
+              - /shippingAddress¹<br>
+              - /viewedOn<br>
+              - /rejectedOn<br>
+              - /inProcessOn<br>
+              - /pendingOn<br>
+              - /readyForDispatchOn<br>
+              - /partiallyDispatchedOn<br>
+              - /dispatchedOn<br>
+              - /deliveredOn<br>
+              - /partiallyInvoicedOn<br>
+              - /invoicedOn<br>
+              - /partiallyPaidOn<br>
+              - /paidOn<br>
+              - /returnedOn<br>
+              - /closedOn<br>
+              - /archivedOn<br>
+
     securedBy: [orders_write]
     is: [ locale ]
     body:
-      application/json:
-        example: !include examples/put_orders_orderid_request.json
+      application/json-patch+json:
+        example: !include examples/patch_order_orderid_request.json
+        schema: !include schema/patch_order_orderid_request.schema.json
     responses:
       200:
         body:
             application/json:
-                example: !include examples/put_orders_orderid_response.json
-                schema: !include schema/put_orders_orderid.schema.json
+                example: !include examples/patch_order_orderid_response.json
+                schema: !include schema/patch_order_orderid.schema.json

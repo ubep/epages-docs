@@ -30,7 +30,6 @@ Before jumping into the authorisation process, let's look at some terms that wil
 ## Authorisation process
 
 {% image oauth2-flow.png %}
-{% endimage %}
 
 ### 1. Ask for permission
 
@@ -41,12 +40,13 @@ While submitting the app, you have to define a **scope**, which outlines the per
 ePages displays the user consent form to the merchant as follows:
 
 {% image asking-for-permission.png %}
-{% endimage %}
 
 ### 2. Confirm the installation
 
 The merchant agrees and submits the consent form by clicking the button **Install** on the consent page.
 The merchant will be redirected to the app's **Application Callback URL**.
+
+{% image application-callback.png %}
 
 ### 3. Receive authorisation code
 
@@ -60,7 +60,7 @@ All API access is over HTTPS.
 Example:
 
 {% highlight text %}
-GET /callback?code={code}&return_url={return_url}&api_url={api_url}&access_token_url={access_token_url} HTTP/1.1
+GET /callback?code={code}&signature={signature}&return_url={return_url}&api_url={api_url}&access_token_url={access_token_url} HTTP/1.1
 Host: crazytoppingapp.com
 {% endhighlight %}
 
@@ -72,13 +72,37 @@ Substitutions would be made as given in this example table:
 | {`api_url`}      | The base API URL, that uniquely identifies the merchant. The `api_url` differs for every merchant and has to be stored in the app.  | https://creamyiceshop.com/rs/shops/CreamyIceShop |
 | {`return_url`}    | The URL which the merchant should be redirected to after the app installation. | https://creamyiceshop.com/epages/CreamyIceShop.admin/?ObjectID=17811&ViewAction=MBO-ViewAppDetails&appID=54f46f318732110bd85f41c7 |
 | {`access_token_url`} | The URL to obtain the `access_token`. | https://creamyiceshop.com/rs/shops/CreamyIceShop/token. |
+| {`signature`}      | The signature is a message authentification code. It is calculated with the `code`, `access_token_url` and `client_secret`.    | jEPRUggebJDBsEnl1%2FpHlMUBxPbsELQihEVzbx2pFlM%3D |
 
-Your app can use the `code` in combination with your **Client ID** and **Client Secret** for obtaining an `access_token`. This code is temporary and will be obsolete after app installation.
+Your app can use the `code` in combination with your **Client ID** and **Client Secret** for obtaining an `access_token`.
+This code is temporary and will be obsolete after app installation.
+Although it is optional to validate the `signature` query parameter, we highly recommend to do so, in order to verify that your request was not changed, and for sure has been provided by ePages and no external, insecure party.
+
+In order to understand how to verify the `signature`, see the following Java code example:
+
+{% highlight java %}
+{
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import org.apache.commons.codec.CharEncoding;
+
+public String calculateSignature(String authCodeValue, String authTokenUrl, String secret) {
+    String HmacSHA256 = "HmacSHA256";
+
+    final Mac mac = Mac.getInstance(HmacSHA256);
+    mac.init(new SecretKeySpec(secret.getBytes(CharEncoding.UTF_8), HmacSHA256));
+
+    byte[] signature = mac.doFinal((authCodeValue + ":" + authTokenUrl).getBytes());
+    return Base64.getEncoder().encodeToString(signature);
+}
+{% endhighlight %}
 
 ### 4. Registration (optional)
 
 If your app requires a registration process, this optional step can be included before obtaining the `access_token`.
 During this, the app would display the registration or login form to the merchant.
+
+{% image registration.png %}
 
 ### 5. Exchange authorisation code for access token
 
@@ -86,7 +110,7 @@ To get an `access_token`, make a `POST` request to the token endpoint provided b
 
 | Field              | Description                                                                                             |
 |--------------------|------------------------------|
-| `code`      | The code provided in the **Application Callback URL** ([see above](page:apps-install#receive-authorisation-code)).     |
+| `code`      | The code provided in the **Application Callback URL** ([see above](page:apps-install#3-receive-authorisation-code)).     |
 | `client_id`   | The client key for the app (see the [get your credentials](page:apps-create#get-your-credentials) section).|
 | `client_secret`    | The shared client secret for the app (see the [get your credentials](page:apps-create#get-your-credentials) section). |
 
@@ -138,18 +162,16 @@ Unlike the `api_url`, the derived **Shop** does **not** uniquely identify a merc
 
 ### 6. Redirect the merchant
 
-Once the authorisation process is complete, your app has to send the merchant back to the `return_url` the app received [before](page:apps-install#receive-authorisation-code).
+Once the authorisation process is complete, your app has to send the merchant back to the `return_url` the app received [before](page:apps-install#3-receive-authorisation-code).
 
 In case of a successful app installation, the merchant will be able to open the app in the Apps & Themes Store.
 If an error occurred during installation, the **Install** button instead of the **Open app** button will be shown.
 
 {% image app-install-success.png %}
-{% endimage %}
 
 The app will also appear in the administration area in the section **My apps**.
 
 {% image app-install-success-myapps.png %}
-{% endimage %}
 
 ## Make an authenticated request to the API
 
@@ -161,7 +183,7 @@ Example:
 GET /rs/shops/CreamyIceShop/products HTTP/1.1
 Host: creamyiceshop.com
 Accept: application/vnd.epages.v1+json
-Authorization: "Bearer 4HZ9hriF6J3GOnd10JbFzdVehycOvAZf
+Authorization: Bearer 4HZ9hriF6J3GOnd10JbFzdVehycOvAZf
 {% endhighlight %}
 
 ## Fancy more information?
